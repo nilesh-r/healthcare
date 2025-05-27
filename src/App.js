@@ -1,10 +1,20 @@
-// src/App.js
 import React, { useState, createContext, useContext } from 'react';
+import { Grid3x3, Clock, BarChart3, Activity, MessageCircle, HelpCircle } from 'lucide-react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import DashboardMainContent from './components/DashboardMainContent';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Calendar from './components/Calendar';
+import Appointments from './components/Appointments';
+import Statistics from './components/Statistics';
+import Tests from './components/Tests';
+import History from './components/History';
+import Chat from './components/Chat';
+import Settings from './components/Settings';
+import Support from './components/Support';
+import Dashboard from './components/Dashboard';
+import { navigationItems } from './data/navigationData';
 import './App.css';
 
 // Create Authentication Context
@@ -25,6 +35,9 @@ const App = () => {
   
   // State to track which page to show (login/signup)
   const [currentView, setCurrentView] = useState('login');
+  
+  // State to track which main content to show (dashboard/calendar)
+  const [activeView, setActiveView] = useState('dashboard');
 
   // Login function
   const login = (userData) => {
@@ -36,6 +49,7 @@ const App = () => {
   const logout = () => {
     setUser(null);
     setCurrentView('login');
+    setActiveView('dashboard'); // Reset to dashboard on logout
     console.log('User logged out');
   };
 
@@ -47,12 +61,43 @@ const App = () => {
       loginMethod: 'Google OAuth'
     });
   };
+  
+
+  // Function to render main content based on active view
+  const renderMainContent = () => {
+    switch(activeView) {
+      case 'calendar':
+        return <Calendar />;
+      case 'Dashboard':
+        return <Dashboard />;
+      case 'Appointments':
+        return <Appointments />;
+      case 'analytics':
+        return <Statistics />;
+      case 'Tests':
+        return <Tests />;
+      case 'patients':
+        return <History />;
+      case 'message':
+        return <Chat />;
+      case 'Setting':
+        return <Settings />;
+      case 'help':
+        return <Support />;
+      case 'dashboard': 
+      default:
+        return <DashboardMainContent />;
+    }
+  };
 
   // Context value to share across components
   const authContextValue = {
     user,
     login,
-    logout
+    logout,
+    activeView,
+    setActiveView,
+    navigationItems
   };
 
   return (
@@ -63,7 +108,7 @@ const App = () => {
           <Header />
           <div className="flex flex-1 overflow-hidden">
             <Sidebar />
-            <DashboardMainContent />
+            {renderMainContent()}
           </div>
         </div>
       ) : (
